@@ -1,0 +1,26 @@
+1.Setup
+
+For develop:
+
+python setup.py develop
+
+
+2.Run: 
+
+cd lightrest && pecan serve config.py
+
+or
+
+cd lightrest && python start.py
+
+
+3.Other issue
+
+Check the pecan/rest.py line 386
+
+Maybe, you need to modify the code
+
+controller = self._find_controller(
+   '%s_%s' % (method, method_name.replace('-', '_')),
+   method_name.replace('-', '_')
+)

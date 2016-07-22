@@ -120,12 +120,13 @@ class RootController(rest.RestController):
 
     @expose()
     def _route(self, args, request):
-        request.accept = 'application/json'
-        if 'application/json' != request.content_type:
-            raise exc.HTTPBadRequest('Not supported content-type')
         if len(args) <= 2 and not utils.is_uuid_like(args[0]):
             msg = 'UUID like Project id is required, and the url like follows'\
-                  '/{project_id}/reource'
+                  '/{project_id}/resources'
             raise exc.HTTPNotFound(msg)
+
+        if args[0] != request.headers.get('X-Auth-Token'):
+            raise exc.HTTPForbidden(
+                'Has no access to visit the %s resources' % args[0])
         del args[0]
         return super(RootController, self)._route(args, request)

@@ -10,7 +10,8 @@ def get_pecan_config():
 
 
 def setup_app(pecan_config=None, extra_hooks=None):
-    app_hooks = [httphooks.ConfigHook(pecan_config)]
+    app_hooks = [httphooks.ConfigHook(pecan_config),
+                 httphooks.ContextHook()]
     pecan.configuration.set_config(dict(pecan_config), overwrite=True)
     app = pecan.make_app(
         pecan_config.app.applications[pecan_config.app.app_switch],

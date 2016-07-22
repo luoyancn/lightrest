@@ -1,6 +1,7 @@
 import pecan
 
 from lightrest import config
+from lightrest.hooks import httphooks
 
 
 def get_pecan_config():
@@ -9,7 +10,7 @@ def get_pecan_config():
 
 
 def setup_app(pecan_config=None, extra_hooks=None):
-    app_hooks = []
+    app_hooks = [httphooks.ConfigHook(pecan_config)]
     pecan.configuration.set_config(dict(pecan_config), overwrite=True)
     app = pecan.make_app(
         pecan_config.app.applications[pecan_config.app.app_switch],
@@ -20,8 +21,8 @@ def setup_app(pecan_config=None, extra_hooks=None):
 
 class VersionSelectorApplication(object):
     def __init__(self):
-        pc = get_pecan_config()
-        self.app = setup_app(pecan_config=pc)
+        self.pc = get_pecan_config()
+        self.app = setup_app(pecan_config=self.pc)
 
     def __call__(self, environ, start_response):
         return self.app(environ, start_response)

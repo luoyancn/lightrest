@@ -6,5 +6,7 @@ from lightrest import app
 
 if __name__ == '__main__':
     wsgi_app = app.VersionSelectorApplication()
-    server = make_server('0.0.0.0', 8080, wsgi_app)
+    listen_host = wsgi_app.pc.server.host
+    listen_port = int(wsgi_app.pc.server.port)
+    server = make_server(listen_host, listen_port, wsgi_app)
     server.serve_forever()

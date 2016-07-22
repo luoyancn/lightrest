@@ -1,4 +1,5 @@
 from datetime import datetime
+import pecan
 from pecan import expose
 from pecan import rest
 from six.moves import http_client
@@ -68,6 +69,9 @@ class NodeController(rest.RestController):
 
     @wsexpose([Node])
     def get_all(self):
+        print pecan.request.cfg.server
+        print pecan.request.cfg.server.host
+        print pecan.request.cfg.server.port
         node = Node()
         node.name = 'node1'
         node.console_enabled = True
@@ -110,5 +114,18 @@ class NodeController(rest.RestController):
         node.update_time = datetime.now()
         return node
 
+
 class RootController(rest.RestController):
     node = NodeController()
+
+    @expose()
+    def _route(self, args, request):
+        request.accept = 'application/json'
+        if 'application/json' != request.content_type:
+            raise exc.HTTPBadRequest('Not supported content-type')
+        if len(args) <= 2 and not utils.is_uuid_like(args[0]):
+            msg = 'UUID like Project id is required, and the url like follows'\
+                  '/{project_id}/reource'
+            raise exc.HTTPNotFound(msg)
+        del args[0]
+        return super(RootController, self)._route(args, request)

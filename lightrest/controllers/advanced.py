@@ -93,7 +93,8 @@ class NodeController(rest.RestController):
         return node
 
     @wsexpose(Node, datatypes.uuidtype, body=NodeRequest,
-              status_code=http_client.ACCEPTED)
+              status_code=http_client.ACCEPTED,
+              rest_content_type=('json',))
     def put(self, nodeid, nodereq):
         node = nodereq.node
         node.uuid = nodeid
@@ -116,8 +117,9 @@ class NodeController(rest.RestController):
 
 setattr(NodeController, 'power-operate',
         wsexpose(None, datatypes.uuidtype, body=PowerRequest,
-                 status_code=http_client.ACCEPTED)(
-                    six.get_method_function(NodeController.power_operate)))
+                 status_code=http_client.ACCEPTED,
+                 rest_content_type=('json',))(
+                     six.get_method_function(NodeController.power_operate)))
 
 
 class RootController(rest.RestController):

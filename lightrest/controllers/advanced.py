@@ -2,6 +2,7 @@ from datetime import datetime
 import pecan
 from pecan import expose
 from pecan import rest
+import six
 from six.moves import http_client
 import uuid
 from webob import exc
@@ -98,11 +99,6 @@ class NodeController(rest.RestController):
         node.uuid = nodeid
         return node
 
-    @wsexpose(None, datatypes.uuidtype, body=PowerRequest,
-              status_code=http_client.ACCEPTED)
-    def power_operate(self, nodeid, power_request):
-        print power_request.power_action
-
     @wsexpose(Node)
     def start(self):
         node = Node()
@@ -113,6 +109,15 @@ class NodeController(rest.RestController):
         node.disks = ['/dev/sda', '/dev/sdb']
         node.update_time = datetime.now()
         return node
+
+    def power_operate(self, nodeid, power_request):
+        print power_request.power_action
+
+
+setattr(NodeController, 'power-operate',
+        wsexpose(None, datatypes.uuidtype, body=PowerRequest,
+                 status_code=http_client.ACCEPTED)(
+                    six.get_method_function(NodeController.power_operate)))
 
 
 class RootController(rest.RestController):

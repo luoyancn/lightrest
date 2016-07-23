@@ -25,6 +25,5 @@ class ContextHook(hooks.PecanHook):
             raise exc.HTTPBadRequest(
                 'X-Auth-Token is required in request headers')
 
-
     def after(self, state):
         pass

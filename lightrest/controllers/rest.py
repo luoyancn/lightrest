@@ -2,6 +2,7 @@ import json
 from pecan import expose
 from pecan import rest
 from pecan import response
+import six
 from six.moves import http_client
 from webob import exc
 
@@ -18,7 +19,7 @@ class NodeController(rest.RestController):
     nic = NodeNicController()
     _custom_actions = {
         'start': ['POST'],
-        'power_off': ['POST']
+        'power-off': ['POST']
     }
 
     @expose(template='json')
@@ -49,10 +50,14 @@ class NodeController(rest.RestController):
         response.status = http_client.ACCEPTED
         return {'result': 'Call the method named start', 'id': nodeid}
 
-    @expose(template='json')
     def power_off(self, nodeid):
         response.status = http_client.ACCEPTED
         return {'result': 'Call the method named power_off', 'id': nodeid}
+
+
+setattr(NodeController, 'power-operate',
+        expose(template='json')(
+            six.get_method_function(NodeController.power_operate)))
 
 
 class VersionController(rest.RestController):
